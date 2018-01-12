@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Artur.Kos</string>
+
+    <string name="dummy_button">Zakończ</string>
+    <string name="splash_msg">Uruchamianie...</string>
+    <string name="splash_img">Smile image</string>
+    <string name="main_img">Happy New Year 2018!</string>
+    <string name="dummy_content"></string>
+</resources>
