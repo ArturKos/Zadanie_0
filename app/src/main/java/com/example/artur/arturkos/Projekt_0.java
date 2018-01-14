@@ -1,21 +1,47 @@
 package com.example.artur.arturkos;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class Projekt_0 extends AppCompatActivity {
-
-
+    /**
+     * Moje zmienne
+     * zmienna edit pobiera nazwę do logowania
+     */
+    private EditText edit;
+    /**
+     * Moje funkcje
+     * Funkcja createAlertDialogWithButtons - wyświetlanie alertu w aplikacji
+     */
+    private void createAlertDialogWithButtons(String message) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Projekt_0.this);
+        dialogBuilder.setCancelable(false);
+        dialogBuilder.setPositiveButton("OK", null);
+        final TextView text = new TextView(Projekt_0.this);
+        text.setText(message);
+        text.setPadding(10, 50, 10, 10);
+        text.setGravity(Gravity.CENTER);
+        text.setTextSize(20);
+        LinearLayout diagLayout = new LinearLayout(this);
+        diagLayout.setOrientation(LinearLayout.VERTICAL);
+        diagLayout.addView(text);
+        dialogBuilder.setView(diagLayout);
+        AlertDialog alert = dialogBuilder.create();
+        alert.show();
+    }
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -71,20 +97,6 @@ public class Projekt_0 extends AppCompatActivity {
             hide();
         }
     };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +107,6 @@ public class Projekt_0 extends AppCompatActivity {
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
-
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +119,7 @@ public class Projekt_0 extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        edit = findViewById(R.id.editText10);
     }
 
     @Override
@@ -118,7 +129,7 @@ public class Projekt_0 extends AppCompatActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        delayedHide(100);
+        delayedHide();
     }
 
     private void toggle() {
@@ -155,15 +166,20 @@ public class Projekt_0 extends AppCompatActivity {
         mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
     }
 
-    public void endapp(View v){
-        finish();
+    public void login(View v){
+        String s = edit.getText().toString();
+        if(s.equals("")){
+            createAlertDialogWithButtons(getString(R.string.field_login_message));
+        }else{
+            createAlertDialogWithButtons(getString(R.string.login_ok_msg)+" "+s);
+        }
 }
     /**
      * Schedules a call to hide() in delay milliseconds, canceling any
      * previously scheduled calls.
      */
-    private void delayedHide(int delayMillis) {
+    private void delayedHide() {
         mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+        mHideHandler.postDelayed(mHideRunnable, 100);
     }
 }

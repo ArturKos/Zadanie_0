@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Artur.Kos</string>
-
-    <string name="dummy_button">Zakończ</string>
-    <string name="splash_msg">Uruchamianie...</string>
+    <string name="dummy_button">Login</string>
+    <string name="login_ok_msg">Hello</string>
+    <string name="text_above_login">Name</string>
+    <string name="splash_msg">Uruchamianie…</string>
     <string name="splash_img">Smile image</string>
-    <string name="main_img">Happy New Year 2018!</string>
-    <string name="dummy_content"></string>
+    <string name="field_login_message">Name field is empty. \n Please enter your name.</string>
 </resources>

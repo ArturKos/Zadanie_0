@@ -1,18 +1,11 @@
 package com.example.artur.arturkos;
 
-/**
- * Created by artur on 31.12.17.
- */
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
 
 public class SplashScreen extends Activity {
-    // Splash screen timer
-    private static int SPLASH_TIME_OUT = 5000;
 
     @Override
     public void onBackPressed(){
@@ -24,6 +17,7 @@ public class SplashScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        int SPLASH_TIME_OUT = 5000;
         new Handler().postDelayed(new Runnable() {
 
 			/*
