@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toolbar;
+
+import java.util.ArrayList;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -103,6 +106,54 @@ public class Projekt_0 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_projekt_0);
+
+        /* utworzenie paska toolbar*/
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Tytuł");
+        toolbar.setSubtitle("Podtytuł");
+        setActionBar(toolbar);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        /* obsługa bazy danych SQLite*/
+
+        LocalOutgoingList lList = new LocalOutgoingList();
+        OutgoingType otBilety = OutgoingType.Bilety;
+        lList.AddOutgoingToList("2018-01.25", otBilety.toString(), "Kino", 100);
+        lList.AddOutgoingToList("2018-01.25", otBilety.toString(), "Teatr", 100);
+        lList.AddOutgoingToList("2018-01.25", "basen", "Koncert", 100);
+        ArrayList<Outgoing> outgoings = lList.GetOutgoingList();
+        OutgoingDbAdapter outgoingDbAdapter = new OutgoingDbAdapter(this);
+        outgoingDbAdapter.open();
+//
+//        /*wstawianie danych do bazy */
+//       for(Outgoing outgoing: outgoings) {
+//           ContentValues newValues = new ContentValues();
+//           newValues.put(OutgoingDbAdapter.NAZWA, outgoing.mNazwa);
+//           newValues.put(OutgoingDbAdapter.DATA, outgoing.mData);
+//           newValues.put(OutgoingDbAdapter.TYP_ID, outgoing.mTyp_id);
+//           newValues.put(OutgoingDbAdapter.WARTOSC, outgoing.mWartosc);
+//           outgoingDbAdapter.insertOutgoing(newValues);
+//       }
+//        /*wyświetlanie danych*/
+//        ListView listview = (ListView) findViewById(R.id.list_view1);
+//        final List<String> outgoing_list = new ArrayList<String>();
+//        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
+//                (this, android.R.layout.simple_list_item_1, outgoing_list);
+//        listview.setAdapter(arrayAdapter);
+//        Cursor outgoingCursor = outgoingDbAdapter.getOutgoings();
+//        StringBuilder results = new StringBuilder();
+//        if(outgoingCursor.moveToFirst()){
+//            do{
+//                Outgoing outgoing = outgoingDbAdapter.getOutgoingFromCursor(outgoingCursor);
+//                results.append(outgoing.mData + "\t\t"+ outgoing.mTyp_id + "\n"
+//                        +outgoing.mNazwa +"\t\t"+outgoing.mWartosc);
+//                outgoing_list.add(results.toString());
+//            }while (outgoingCursor.moveToNext());
+//        }
+//        arrayAdapter.notifyDataSetChanged();
+//        outgoingCursor.close();
+//        outgoingDbAdapter.close();
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
