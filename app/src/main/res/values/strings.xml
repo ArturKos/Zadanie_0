@@ -6,4 +6,15 @@
     <string name="splash_msg">Uruchamianie…</string>
     <string name="splash_img">Smile image</string>
     <string name="field_login_message">Name field is empty. \n Please enter your name.</string>
+
+    <string name="hello">Hello World, Todo!</string>
+    <string name="no_todos">Currently there are no Todo items maintained</string>
+    <string name="menu_insert">Add Item</string>
+    <string name="menu_delete">Delete Todo</string>
+    <string name="todo_summary">Summary</string>
+    <string name="todo_description">Delete Todo</string>
+    <string name="todo_edit_name">Nazwa</string>
+    <string name="todo_edit_date">Data DD-MM-RRRR</string>
+    <string name="todo_edit_value">Wartość</string>
+    <string name="todo_edit_confirm">Confirm</string>
 </resources>

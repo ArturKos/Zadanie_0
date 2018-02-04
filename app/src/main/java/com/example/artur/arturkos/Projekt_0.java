@@ -1,236 +1,154 @@
 package com.example.artur.arturkos;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.app.ListActivity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.Gravity;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
-import java.util.ArrayList;
+import com.example.artur.arturkos.contentprovider.MyTodoContentProvider;
+import com.example.artur.arturkos.database.TodoTable;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
+/*
+ * TodosOverviewActivity displays the existing todo items
+ * in a list
+ *
+ * You can create new ones via the ActionBar entry "Insert"
+ * You can delete existing ones via a long press on the item
  */
-public class Projekt_0 extends AppCompatActivity {
-    /**
-     * Moje zmienne
-     * zmienna edit pobiera nazwę do logowania
-     */
-    private EditText edit;
-    /**
-     * Moje funkcje
-     * Funkcja createAlertDialogWithButtons - wyświetlanie alertu w aplikacji
-     */
-    private void createAlertDialogWithButtons(String message) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(Projekt_0.this);
-        dialogBuilder.setCancelable(false);
-        dialogBuilder.setPositiveButton("OK", null);
-        final TextView text = new TextView(Projekt_0.this);
-        text.setText(message);
-        text.setPadding(10, 50, 10, 10);
-        text.setGravity(Gravity.CENTER);
-        text.setTextSize(20);
-        LinearLayout diagLayout = new LinearLayout(this);
-        diagLayout.setOrientation(LinearLayout.VERTICAL);
-        diagLayout.addView(text);
-        dialogBuilder.setView(diagLayout);
-        AlertDialog alert = dialogBuilder.create();
-        alert.show();
-    }
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
 
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+public class Projekt_0 extends ListActivity implements
+        LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int ACTIVITY_CREATE = 0;
+    private static final int ACTIVITY_EDIT = 1;
+    private static final int DELETE_ID = Menu.FIRST + 1;
+    // private Cursor cursor;
+    private SimpleCursorAdapter adapter;
 
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
-    private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-    private View mContentView;
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            // Delayed removal of status and navigation bar
-
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-    private View mControlsView;
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
-            mControlsView.setVisibility(View.VISIBLE);
-        }
-    };
-    private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-
+    /** Called when the activity is first created. */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.todo_list);
+        this.getListView().setDividerHeight(2);
+        fillData();
+//        String[] from = new String[] { TodoTable.COLUMN_DATA };
+//        MySimpleArrayAdapter adapter = new MySimpleArrayAdapter(this,from, from);
+//        setListAdapter(adapter);
+        registerForContextMenu(getListView());
+    }
 
-        setContentView(R.layout.activity_projekt_0);
+    // create the menu based on the XML defintion
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.listmenu, menu);
+        return true;
+    }
 
-        /* utworzenie paska toolbar*/
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Tytuł");
-        toolbar.setSubtitle("Podtytuł");
-        setActionBar(toolbar);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        /* obsługa bazy danych SQLite*/
-
-        LocalOutgoingList lList = new LocalOutgoingList();
-        OutgoingType otBilety = OutgoingType.Bilety;
-        lList.AddOutgoingToList("2018-01.25", otBilety.toString(), "Kino", 100);
-        lList.AddOutgoingToList("2018-01.25", otBilety.toString(), "Teatr", 100);
-        lList.AddOutgoingToList("2018-01.25", "basen", "Koncert", 100);
-        ArrayList<Outgoing> outgoings = lList.GetOutgoingList();
-        OutgoingDbAdapter outgoingDbAdapter = new OutgoingDbAdapter(this);
-        outgoingDbAdapter.open();
-//
-//        /*wstawianie danych do bazy */
-//       for(Outgoing outgoing: outgoings) {
-//           ContentValues newValues = new ContentValues();
-//           newValues.put(OutgoingDbAdapter.NAZWA, outgoing.mNazwa);
-//           newValues.put(OutgoingDbAdapter.DATA, outgoing.mData);
-//           newValues.put(OutgoingDbAdapter.TYP_ID, outgoing.mTyp_id);
-//           newValues.put(OutgoingDbAdapter.WARTOSC, outgoing.mWartosc);
-//           outgoingDbAdapter.insertOutgoing(newValues);
-//       }
-//        /*wyświetlanie danych*/
-//        ListView listview = (ListView) findViewById(R.id.list_view1);
-//        final List<String> outgoing_list = new ArrayList<String>();
-//        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
-//                (this, android.R.layout.simple_list_item_1, outgoing_list);
-//        listview.setAdapter(arrayAdapter);
-//        Cursor outgoingCursor = outgoingDbAdapter.getOutgoings();
-//        StringBuilder results = new StringBuilder();
-//        if(outgoingCursor.moveToFirst()){
-//            do{
-//                Outgoing outgoing = outgoingDbAdapter.getOutgoingFromCursor(outgoingCursor);
-//                results.append(outgoing.mData + "\t\t"+ outgoing.mTyp_id + "\n"
-//                        +outgoing.mNazwa +"\t\t"+outgoing.mWartosc);
-//                outgoing_list.add(results.toString());
-//            }while (outgoingCursor.moveToNext());
-//        }
-//        arrayAdapter.notifyDataSetChanged();
-//        outgoingCursor.close();
-//        outgoingDbAdapter.close();
-
-        mVisible = true;
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content);
-
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        edit = findViewById(R.id.editText10);
+    // Reaction to the menu selection
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.insert:
+                createTodo();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide();
-    }
-
-    private void toggle() {
-        if (mVisible) {
-            hide();
-        } else {
-            show();
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case DELETE_ID:
+                AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+                        .getMenuInfo();
+                Uri uri = Uri.parse(MyTodoContentProvider.CONTENT_URI + "/"
+                        + info.id);
+                getContentResolver().delete(uri, null, null);
+                fillData();
+                return true;
         }
+        return super.onContextItemSelected(item);
     }
 
-    private void hide() {
-        // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        mControlsView.setVisibility(View.GONE);
-        mVisible = false;
-
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
+    private void createTodo() {
+        Intent i = new Intent(this, TodoDetailActivity.class);
+        startActivity(i);
     }
 
-    @SuppressLint("InlinedApi")
-    private void show() {
-        // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        mVisible = true;
+    // Opens the second activity if an entry is clicked
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Intent i = new Intent(this, TodoDetailActivity.class);
+        Uri todoUri = Uri.parse(MyTodoContentProvider.CONTENT_URI + "/" + id);
+        i.putExtra(MyTodoContentProvider.CONTENT_ITEM_TYPE, todoUri);
 
-        // Schedule a runnable to display UI elements after a delay
-        mHideHandler.removeCallbacks(mHidePart2Runnable);
-        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
+        startActivity(i);
     }
 
-    public void login(View v){
-        String s = edit.getText().toString();
-        if(s.equals("")){
-            createAlertDialogWithButtons(getString(R.string.field_login_message));
-        }else{
-            createAlertDialogWithButtons(getString(R.string.login_ok_msg)+" "+s);
-        }
-}
-    /**
-     * Schedules a call to hide() in delay milliseconds, canceling any
-     * previously scheduled calls.
-     */
-    private void delayedHide() {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, 100);
+
+
+    private void fillData() {
+
+        // Fields from the database (projection)
+        // Must include the _id column for the adapter to work
+
+        String[] from = new String[] { TodoTable.COLUMN_DATA };
+        // Fields on the UI to which we map
+        int[] to = new int[] { R.id.label1 };
+
+        getLoaderManager().initLoader(0, null, this);
+
+//        adapter = new SimpleCursorAdapter(this, R.layout.todo_row, null, from,
+//                to, 0);
+        adapter = new SimpleCursorAdapter(this,
+                R.layout.todo_row, null,
+                new String[] {  TodoTable.COLUMN_NAME, TodoTable.COLUMN_TYP_ID, TodoTable.COLUMN_DATA, TodoTable.COLUMN_VALUE },
+                new int[] {   R.id.label1, R.id.label2, R.id.label3,R.id.label4}, 0);
+        //TodoCursorAdapter todoAdapter = new TodoCursorAdapter(this, todoCursor);
+        setListAdapter(adapter);
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, DELETE_ID, 0, R.string.menu_delete);
+    }
+
+    // creates a new loader after the initLoader () call
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+//        String[] projection = { TodoTable.COLUMN_ID, TodoTable.COLUMN_NAME, TodoTable.COLUMN_VALUE, TodoTable.COLUMN_VALUE };
+        CursorLoader cursorLoader = new CursorLoader(this,
+                MyTodoContentProvider.CONTENT_URI, null, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // data is not available anymore, delete reference
+        adapter.swapCursor(null);
+    }
+
 }
