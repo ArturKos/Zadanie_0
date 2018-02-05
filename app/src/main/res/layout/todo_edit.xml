@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
     <Spinner
-        android:id="@+id/category"
+        android:id="@+id/type_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:entries="@array/priorities" >
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/todo_edit_summary"
+            android:id="@+id/todo_edit_nazwa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -27,7 +27,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/todo_edit_description"
+        android:id="@+id/todo_edit_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -36,7 +36,7 @@
         android:imeOptions="actionNext" >
     </EditText>
     <EditText
-        android:id="@+id/todo_edit_value"
+        android:id="@+id/todo_edit_wartosc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"

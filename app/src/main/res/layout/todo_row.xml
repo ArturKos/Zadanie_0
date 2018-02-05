@@ -5,11 +5,11 @@
     android:stretchColumns="1">
     <TableRow>
         <TextView
-            android:id="@+id/label1"
+            android:id="@+id/label1data"
             android:text="@+id/TextView01"
             android:padding="3dip" />
         <TextView
-            android:id="@+id/label2"
+            android:id="@+id/label2typ"
             android:text="@+id/TextView02"
             android:gravity="right"
             android:padding="3dip" />
@@ -17,11 +17,11 @@
 
     <TableRow>
         <TextView
-            android:id="@+id/label3"
+            android:id="@+id/label3nazwa"
             android:text="@+id/TextView03"
             android:padding="3dip" />
         <TextView
-            android:id="@+id/label4"
+            android:id="@+id/label4wartosc"
             android:text="@+id/TextView04"
             android:gravity="right"
             android:padding="3dip" />

@@ -7,12 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.CursorAdapter;
-import android.content.Context;
-import android.database.Cursor;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+
 
 /**
  * Created by Artur on 04.02.2018.
@@ -36,19 +31,19 @@ public class TodoCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         // Find fields to populate in inflated template
 
-        TextView name = (TextView) view.findViewById(R.id.label1);
-        TextView date = (TextView) view.findViewById(R.id.label2);
-        TextView sum = (TextView) view.findViewById(R.id.label3);
-        TextView desc = (TextView) view.findViewById(R.id.label4);
+        TextView name = (TextView) view.findViewById(R.id.label3nazwa);
+        TextView date = (TextView) view.findViewById(R.id.label1data);
+        TextView type = (TextView) view.findViewById(R.id.label2typ);
+        TextView value = (TextView) view.findViewById(R.id.label4wartosc);
         // Extract properties from cursor
-        String category = cursor.getString(cursor.getColumnIndexOrThrow("category"));
-        String summary = cursor.getString(cursor.getColumnIndexOrThrow("summary"));
-        String description = cursor.getString(cursor.getColumnIndexOrThrow("description"));
-        double wartosc = cursor.getInt(cursor.getColumnIndexOrThrow("wartosc"));
+        String nazwa = cursor.getString(cursor.getColumnIndexOrThrow("nazwa"));
+        String typ_id = cursor.getString(cursor.getColumnIndexOrThrow("typ_id"));
+        String data = cursor.getString(cursor.getColumnIndexOrThrow("data"));
+        String wartosc = cursor.getString(cursor.getColumnIndexOrThrow("wartosc"));
         // Populate fields with extracted properties
-        name.setText(category);
-        date.setText(description);
-        sum.setText(summary);
-        desc.setText(Double.toString(wartosc));
+        name.setText(nazwa);
+        date.setText(data);
+        type.setText(typ_id);
+        value.setText(wartosc);
     }
 }

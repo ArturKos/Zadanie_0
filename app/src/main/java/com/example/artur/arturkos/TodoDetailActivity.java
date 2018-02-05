@@ -23,10 +23,10 @@ import com.example.artur.arturkos.database.TodoTable;
  * or to change an existing
  */
 public class TodoDetailActivity extends Activity {
-    private Spinner mCategory;
-    private EditText mTitleText;
-    private EditText mBodyText;
-    private EditText value;
+    private Spinner typ_id;
+    private EditText nazwa;
+    private EditText data;
+    private EditText wartosc;
 
     private Uri todoUri;
 
@@ -35,10 +35,10 @@ public class TodoDetailActivity extends Activity {
         super.onCreate(bundle);
         setContentView(R.layout.todo_edit);
 
-        mCategory = (Spinner) findViewById(R.id.category);
-        mTitleText = (EditText) findViewById(R.id.todo_edit_summary);
-        mBodyText = (EditText) findViewById(R.id.todo_edit_description);
-        value = (EditText) findViewById(R.id.todo_edit_value);
+        typ_id = (Spinner) findViewById(R.id.type_id);
+        nazwa = (EditText) findViewById(R.id.todo_edit_nazwa);
+        data = (EditText) findViewById(R.id.todo_edit_data);
+        wartosc = (EditText) findViewById(R.id.todo_edit_wartosc);
         Button confirmButton = (Button) findViewById(R.id.todo_edit_button);
 
         Bundle extras = getIntent().getExtras();
@@ -57,7 +57,7 @@ public class TodoDetailActivity extends Activity {
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (TextUtils.isEmpty(mTitleText.getText().toString())) {
+                if (TextUtils.isEmpty(nazwa.getText().toString())) {
                     makeToast();
                 } else {
                     setResult(RESULT_OK);
@@ -69,8 +69,8 @@ public class TodoDetailActivity extends Activity {
     }
 
     private void fillData(Uri uri) {
-        String[] projection = { TodoTable.COLUMN_DATA,
-                TodoTable.COLUMN_TYP_ID, TodoTable.COLUMN_NAME};
+//        String[] projection = { TodoTable.COLUMN_DATA,
+//                TodoTable.COLUMN_TYP_ID, TodoTable.COLUMN_NAME};
         Cursor cursor = getContentResolver().query(uri, null, null, null,
                 null);
         if (cursor != null) {
@@ -78,19 +78,19 @@ public class TodoDetailActivity extends Activity {
             String category = cursor.getString(cursor
                     .getColumnIndexOrThrow(TodoTable.COLUMN_NAME));
 
-            for (int i = 0; i < mCategory.getCount(); i++) {
+            for (int i = 0; i < typ_id.getCount(); i++) {
 
-                String s = (String) mCategory.getItemAtPosition(i);
+                String s = (String) typ_id.getItemAtPosition(i);
                 if (s.equalsIgnoreCase(category)) {
-                    mCategory.setSelection(i);
+                    typ_id.setSelection(i);
                 }
             }
 
-            mTitleText.setText(cursor.getString(cursor
+            nazwa.setText(cursor.getString(cursor
+                    .getColumnIndexOrThrow(TodoTable.COLUMN_NAME)));
+            data.setText(cursor.getString(cursor
                     .getColumnIndexOrThrow(TodoTable.COLUMN_DATA)));
-            mBodyText.setText(cursor.getString(cursor
-                    .getColumnIndexOrThrow(TodoTable.COLUMN_TYP_ID)));
-            value.setText(cursor.getString(cursor
+            wartosc.setText(cursor.getString(cursor
                     .getColumnIndexOrThrow(TodoTable.COLUMN_VALUE)));
 
             // always close the cursor
@@ -111,22 +111,22 @@ public class TodoDetailActivity extends Activity {
     }
 
     private void saveState() {
-        String category = (String) mCategory.getSelectedItem();
-        String summary = mTitleText.getText().toString();
-        String description = mBodyText.getText().toString();
-        String val = value.getText().toString();
+        String type_id = (String) typ_id.getSelectedItem();
+        String name = nazwa.getText().toString();
+        String date = data.getText().toString();
+        String val = wartosc.getText().toString();
 
         // only save if either summary or description
         // is available
 
-        if (description.length() == 0 && summary.length() == 0) {
+        if (date.length() == 0 && name.length() == 0) {
             return;
         }
 
         ContentValues values = new ContentValues();
-        values.put(TodoTable.COLUMN_NAME, category);
-        values.put(TodoTable.COLUMN_DATA, summary);
-        values.put(TodoTable.COLUMN_TYP_ID, description);
+        values.put(TodoTable.COLUMN_NAME, name);
+        values.put(TodoTable.COLUMN_DATA, date);
+        values.put(TodoTable.COLUMN_TYP_ID, type_id);
         values.put(TodoTable.COLUMN_VALUE, val);
 
         if (todoUri == null) {

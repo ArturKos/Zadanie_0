@@ -107,10 +107,9 @@ public class Projekt_0 extends ListActivity implements
 
         // Fields from the database (projection)
         // Must include the _id column for the adapter to work
-
-        String[] from = new String[] { TodoTable.COLUMN_DATA };
+//        String[] from = new String[] { TodoTable.COLUMN_DATA };
         // Fields on the UI to which we map
-        int[] to = new int[] { R.id.label1 };
+//        int[] to = new int[] { R.id.label1 };
 
         getLoaderManager().initLoader(0, null, this);
 
@@ -119,7 +118,7 @@ public class Projekt_0 extends ListActivity implements
         adapter = new SimpleCursorAdapter(this,
                 R.layout.todo_row, null,
                 new String[] {  TodoTable.COLUMN_NAME, TodoTable.COLUMN_TYP_ID, TodoTable.COLUMN_DATA, TodoTable.COLUMN_VALUE },
-                new int[] {   R.id.label1, R.id.label2, R.id.label3,R.id.label4}, 0);
+                new int[] {   R.id.label3nazwa, R.id.label2typ, R.id.label1data,R.id.label4wartosc}, 0);
         //TodoCursorAdapter todoAdapter = new TodoCursorAdapter(this, todoCursor);
         setListAdapter(adapter);
     }
